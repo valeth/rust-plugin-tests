@@ -1,4 +1,6 @@
-use plugin::{Plugin, plugin};
+use log::debug;
+
+use plugin::{Plugin, define_plugin};
 
 
 #[derive(Default)]
@@ -10,10 +12,9 @@ impl Plugin for ByeWorldPlugin {
     }
 
     fn on_load(&self) {
-        // println somehow leaks memory
-        // println!("Bye World");
+        debug!("Bye World");
     }
 }
 
 
-plugin!(ByeWorldPlugin, Default::default);
+define_plugin!(ByeWorldPlugin, Default::default);

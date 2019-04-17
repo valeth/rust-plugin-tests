@@ -3,9 +3,10 @@ name = "client"
 version = "0.0.0"
 edition = "2018"
 
-[dependencies.lib]
-package = "libloading"
-version = "^0.5"
+[dependencies]
+log = "^0.4"
+fern = "^0.5"
+chrono = "^0.4"
 
 [dependencies.plugin]
 path = "../plugin"

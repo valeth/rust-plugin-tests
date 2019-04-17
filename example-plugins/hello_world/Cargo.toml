@@ -3,13 +3,12 @@ name = "hello_world"
 version = "0.0.0"
 edition = "2018"
 
+[dependencies]
+log = "^0.4"
+
 [dependencies.plugin]
 version = "*"
 path = "../../plugin"
 
 [lib]
-crate-type = ["dylib"]
-
-# links against C libraries
-# [lib]
-# crate-type = ["cdylib"]
+crate-type = ["cdylib", "rlib"]

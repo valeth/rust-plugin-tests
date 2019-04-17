@@ -1,4 +1,6 @@
-use plugin::{Plugin, plugin};
+use log::debug;
+
+use plugin::{Plugin, define_plugin};
 
 
 #[derive(Default)]
@@ -10,9 +12,9 @@ impl Plugin for HelloWorldPlugin {
     }
 
     fn on_load(&self) {
-        // println!("Hello World");
+        debug!("Hello World");
     }
 }
 
 
-plugin!(HelloWorldPlugin, Default::default);
+define_plugin!(HelloWorldPlugin, Default::default);

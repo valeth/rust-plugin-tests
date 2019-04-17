@@ -1,19 +1,25 @@
 use std::path::Path;
-use plugin::{Plugin, CreateFn};
 
+use log::debug;
 use lib::{self, Symbol, Library};
 
+use crate::plugin::{Plugin, CreateFn};
 
 
 #[derive(Default)]
 pub struct PluginManager {
     loaded: Vec<Library>,
     plugins: Vec<Box<dyn Plugin>>,
+    logger : Option<&'static dyn log::Log>,
 }
 
 impl PluginManager {
     pub fn new() -> Self {
         Self::default()
+    }
+
+    pub fn set_logger(&mut self, logger: &'static dyn log::Log) {
+        self.logger = Some(logger);
     }
 
     pub fn load_plugins<P>(&mut self, paths: &[P]) -> Result<(), String>
@@ -33,12 +39,18 @@ impl PluginManager {
             .map_err(|e| format!("Failed to load plugin {}: {}", path.display(), e))?;
 
         let plugin = unsafe {
-            let ctor = lib.get::<Symbol<'_, CreateFn>>(b"_plugin_create")
+            let ctor = lib
+                .get::<Symbol<'_, CreateFn>>(b"_plugin_create")
                 .map_err(|e| format!("Failed to load plugin {}: {}", path.display(), e))?;
             Box::from_raw(ctor())
         };
 
+        debug!("Loaded plugin '{}'", plugin.name());
+
         self.loaded.push(lib);
+        if let Some(logger) = self.logger {
+            plugin.set_logger(logger, log::max_level());
+        }
         plugin.on_load();
         self.plugins.push(plugin);
 
