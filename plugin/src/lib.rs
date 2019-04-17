@@ -1,4 +1,6 @@
 #![warn(rust_2018_idioms)]
+#![warn(clippy::all)]
+
 
 #[macro_use]
 mod macros;

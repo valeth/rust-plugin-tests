@@ -1,3 +1,7 @@
+#![warn(rust_2018_idioms)]
+#![warn(clippy::all)]
+
+
 use log::debug;
 
 use plugin::{Plugin, define_plugin};
