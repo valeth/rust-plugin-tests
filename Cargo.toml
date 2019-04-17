@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "client",
-    "plugins/plugin1",
-    "plugins/plugin2"
+    "plugin",
+    "example-plugins/hello_world",
+    "example-plugins/bye_world",
 ]

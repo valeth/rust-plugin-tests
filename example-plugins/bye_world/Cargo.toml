@@ -1,0 +1,11 @@
+[package]
+name = "bye_world"
+version = "0.0.0"
+edition = "2018"
+
+[dependencies.plugin]
+version = "*"
+path = "../../plugin"
+
+[lib]
+crate-type = ["dylib"]

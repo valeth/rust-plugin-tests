@@ -1,2 +1,5 @@
 /target
 **/*.rs.bk
+
+# Just a test environment
+/runtime-env

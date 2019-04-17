@@ -1,55 +1,31 @@
 #![warn(rust_2018_idioms)]
 
-use std::env;
-use lib::{self, Symbol, Library};
+mod plugin_manager;
 
 
-type LoadFunc = unsafe extern fn() -> ();
+use std::{
+    env,
+    path::PathBuf,
+};
 
-#[derive(Debug, Default)]
-struct PluginManager {
-    plugins: Vec<Library>,
-}
-
-impl PluginManager {
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    pub fn init(&mut self, paths: &[String]) {
-        for path in paths {
-            match Library::new(path) {
-                Ok(l) => self.plugins.push(l),
-                Err(e) => {
-                    eprintln!("{}", e);
-                    continue;
-                }
-            }
-        }
-    }
-
-    pub fn handle_on_load(&self) {
-        for plugin in &self.plugins {
-            unsafe {
-                match plugin.get::<Symbol<'_, LoadFunc>>(b"on_load") {
-                    Ok(fun) => fun(),
-                    Err(e) => eprintln!("{}", e),
-                }
-            }
-        }
-    }
-}
+use self::plugin_manager::PluginManager;
 
 
 fn main() {
-    let libs: Vec<_> = env::args().skip(1).collect();
-
-    if libs.is_empty() {
-        println!("No plugins specified");
-        std::process::exit(1);
-    }
-
     let mut plugman = PluginManager::new();
-    plugman.init(&libs);
-    plugman.handle_on_load();
+    let plugin_dir = env::var("PTEST_PLUGIN_DIR")
+        .map(PathBuf::from)
+        .unwrap_or_else(|_| env::current_dir().unwrap().join("plugins"));
+
+    let libs = plugin_dir
+        .read_dir()
+        .expect("Uuuuh..., something's fucked")
+        .map(|x| x.expect("FUCK").path())
+        .collect::<Vec<_>>();
+
+
+    println!("Loading plugins...");
+    if let Err(e) = plugman.load_plugins(&libs) {
+        eprintln!("{}", e);
+    }
 }
