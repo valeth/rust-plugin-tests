@@ -1,0 +1,9 @@
+[package]
+name = "plugin2"
+version = "0.0.0"
+edition = "2018"
+
+[dependencies]
+
+[lib]
+crate-type = ["dylib"]
